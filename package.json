@@ -1,0 +1,23 @@
+{
+  "name": "wordGuessCli",
+  "version": "1.0.0",
+  "description": "Let's make a word guess game through Node.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/majorazero/wordGuessCli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/majorazero/wordGuessCli/issues"
+  },
+  "homepage": "https://github.com/majorazero/wordGuessCli#readme",
+  "dependencies": {
+    "inquirer": "^6.2.0"
+  }
+}

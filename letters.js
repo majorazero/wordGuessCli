@@ -1,4 +1,4 @@
-let Letters = function() = {
+let Letters = function(char){
   this.thisLetter = char;
   this.guessed = false;
   this.whatLetter = function(){

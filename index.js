@@ -10,54 +10,84 @@ let unguessedLength = 0;
 let guessedLetters = [];
 
 game();
-function game(){
-  if(newGame === true){
-    phraseAmount = Math.ceil(Math.random()*3);
+/**
+* Sets the difficulty of the game, easy-hard -> 1-3 phrases
+*/
+function difficultySetting(){
+  inquirer.prompt({
+    message: "Choose your difficulty!",
+    type: "list",
+    name: "choice",
+    choices: ["Easy","Medium","Hard"]
+  }).then(function(response){
+    switch(response.choice){
+      case "Easy":
+        phraseAmount = 1;
+        break;
+      case "Medium":
+        phraseAmount = 2;
+        break;
+      default:
+        phraseAmount = 3;
+    }
     gameWord = new Words(randomWord({exactly: phraseAmount, join: " "}));
     unguessedLength = gameWord.wordDis().replace(/\s/g,"").length;
     newGame = false;
-  }
-  inquirer.prompt({
-    message:"Time to play the game of games, the WORD GUESS game! Guess this word! \n"+
-    gameWord.wordDis(),
-    type: "input",
-    name: "input"
-  }).then(function(response){
-    if(validate(response.input) === true){
-    gameWord.wordCheck(response.input);
-    if(gameWord.wordDis().indexOf("_") !== -1){
-      if(guessLeft > 1){
-        let unguessedLengthNew = gameWord.wordDis().length-gameWord.wordDis().replace(/_/g,"").length;
-        if (guessedLetters.indexOf(response.input.toLowerCase()) !== -1){ //you guessed the letter before
-          console.log("You guessed that already! Try again~");
-        }
-        else if( unguessedLengthNew === unguessedLength){
-          guessedLetters.push(response.input.toLowerCase());
-          guessLeft--;
-          console.log("You have "+guessLeft+" guesses left!");
-        }
-        else{
-          guessedLetters.push(response.input.toLowerCase());
-          unguessedLength = unguessedLengthNew;
-          console.log("Woot you got one!");
-        }
-        game();
-      }
-      else {
-        gameReset(false);
-      }
-    }
-    else{
-      //you win
-      gameReset(true);
-    }
-  }
-  else{
     game();
-  }
   });
 }
-
+/**
+* Runs the actualy game. If new game is true, it'll trigger difficultySetting() and makes a new word
+*/
+function game(){
+  if(newGame === true){
+    difficultySetting();
+  }
+  else{
+    inquirer.prompt({
+      message:"Time to play the game of games, the WORD GUESS game! Guess this word! \n"+
+      gameWord.wordDis(),
+      type: "input",
+      name: "input"
+    }).then(function(response){
+      if(validate(response.input) === true){
+        gameWord.wordCheck(response.input);
+        if(gameWord.wordDis().indexOf("_") !== -1){
+          if(guessLeft > 0){
+            let unguessedLengthNew = gameWord.wordDis().length-gameWord.wordDis().replace(/_/g,"").length;
+            if (guessedLetters.indexOf(response.input.toLowerCase()) !== -1){ //you guessed the letter before
+              console.log("You guessed that already! Try again~");
+            }
+            else if( unguessedLengthNew === unguessedLength){
+              guessedLetters.push(response.input.toLowerCase());
+              guessLeft--;
+              console.log("You have "+guessLeft+" guesses left!");
+            }
+            else{
+              guessedLetters.push(response.input.toLowerCase());
+              unguessedLength = unguessedLengthNew;
+              console.log("Woot you got one!");
+            }
+            game();
+          }
+          else {
+            gameReset(false);
+          }
+        }
+        else{
+          //you win
+          gameReset(true);
+        }
+    }
+    else{
+      game();
+    }
+    });
+  }
+}
+/**
+* Makes sure the input of the user has to a single char
+*/
 function validate(q){
   if(/^[a-zA-Z]/.test(q) && q.length === 1){
     return true;
@@ -67,7 +97,10 @@ function validate(q){
     return false;
   }
 }
-
+/**
+* Resets the game stat or ends the game based on win state
+* @param {Boolean} win - Whether or not you won the game.
+*/
 function gameReset(win){
   let message;
   guessedLetters = [];

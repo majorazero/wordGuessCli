@@ -1,8 +1,6 @@
 let Words = require("./word.js");
 let inquirer = require("inquirer");
-let randomWord = function(){
-  return "blueDials";
-};//require("random-words");
+let randomWord = require("random-words");
 let phraseAmount = 1;
 let gameWord;
 let newGame = true;
@@ -10,11 +8,11 @@ let guessLeft = 10;
 let streak = 0;
 let unguessedLength = 0;
 
-//console.log(randomWord({exactly: phraseAmount, join: " "}));
 game();
 function game(){
   if(newGame === true){
-    gameWord = new Words(randomWord());
+    phraseAmount = Math.ceil(Math.random()*3);
+    gameWord = new Words(randomWord({exactly: phraseAmount, join: " "}));
     unguessedLength = gameWord.wordDis().length;
     newGame = false;
   }
@@ -62,11 +60,17 @@ function gameReset(win){
   let message;
   if (win === true){
     streak++;
-    message = "The word was "+gameWord.wordDis()+"! You win, have an imaginary cookie! Have another go?";
+    if(streak > 2){
+      console.log("You're on a streak! Keep it up! Streak:"+streak);
+    }
+    else {
+      console.log("Nice~ Streak:"+streak);
+    }
+    message = "The word was "+gameWord.trueWord+"! You win, have an imaginary cookie! Have another go?";
   }
   else {
     streak = 0; //ends your streak
-    message = "You lose! Try again?";
+    message = "The word was "+gameWord.trueWord+"! You lose! Try again?";
   }
   inquirer.prompt({
     message: message,

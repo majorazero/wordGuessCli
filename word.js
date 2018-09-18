@@ -1,6 +1,7 @@
 let Letters = require("./letters.js");
 
 let Words = function(word){
+  this.trueWord = word;
   this.word = [];
   for(let i = 0; i < word.length; i++){
     this.word.push(new Letters(word[i]));

@@ -15,3 +15,5 @@ let Letters = function(char){
     }
   }
 };
+
+module.exports = Letters;

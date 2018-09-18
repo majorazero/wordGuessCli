@@ -7,13 +7,14 @@ let newGame = true;
 let guessLeft = 10;
 let streak = 0;
 let unguessedLength = 0;
+let guessedLetters = [];
 
 game();
 function game(){
   if(newGame === true){
     phraseAmount = Math.ceil(Math.random()*3);
     gameWord = new Words(randomWord({exactly: phraseAmount, join: " "}));
-    unguessedLength = gameWord.wordDis().length;
+    unguessedLength = gameWord.wordDis().replace(/\s/g,"").length;
     newGame = false;
   }
   inquirer.prompt({
@@ -31,15 +32,21 @@ function game(){
       }
     }
   }).then(function(response){
+
     gameWord.wordCheck(response.input);
     if(gameWord.wordDis().indexOf("_") !== -1){
       if(guessLeft > 1){
         let unguessedLengthNew = gameWord.wordDis().length-gameWord.wordDis().replace(/_/g,"").length;
-        if( unguessedLengthNew === unguessedLength){
+        if (guessedLetters.indexOf(response.input) !== -1 ){ //you guessed the letter before
+          console.log("You guessed that already! Try again~");
+        }
+        else if( unguessedLengthNew === unguessedLength){
+          guessedLetters.push(response.input);
           guessLeft--;
           console.log("You have "+guessLeft+" guesses left!");
         }
         else{
+          guessedLetters.push(response.input);
           unguessedLength = unguessedLengthNew;
           console.log("Woot you got one!");
         }
@@ -58,6 +65,7 @@ function game(){
 
 function gameReset(win){
   let message;
+  guessedLetters = [];
   if (win === true){
     streak++;
     if(streak > 2){

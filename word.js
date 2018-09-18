@@ -8,7 +8,7 @@ let Words = function(word){
   this.wordDis = function(){
     let display = "";
     for(let i = 0; i < this.word.length; i++){
-      display += this.word[i].whatLetter();
+      display += this.word[i].whatLetter()+" ";
     }
     return display;
   }

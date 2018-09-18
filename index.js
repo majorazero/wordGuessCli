@@ -21,32 +21,23 @@ function game(){
     message:"Time to play the game of games, the WORD GUESS game! Guess this word! \n"+
     gameWord.wordDis(),
     type: "input",
-    name: "input",
-    validate: function(q) {
-      if(typeof q === "string" && q.length === 1){
-        return true;
-      }
-      else {
-        console.log("\n Gotta put in a letter, bud.");
-        return false;
-      }
-    }
+    name: "input"
   }).then(function(response){
-
+    if(validate(response.input) === true){
     gameWord.wordCheck(response.input);
     if(gameWord.wordDis().indexOf("_") !== -1){
       if(guessLeft > 1){
         let unguessedLengthNew = gameWord.wordDis().length-gameWord.wordDis().replace(/_/g,"").length;
-        if (guessedLetters.indexOf(response.input) !== -1 ){ //you guessed the letter before
+        if (guessedLetters.indexOf(response.input.toLowerCase()) !== -1){ //you guessed the letter before
           console.log("You guessed that already! Try again~");
         }
         else if( unguessedLengthNew === unguessedLength){
-          guessedLetters.push(response.input);
+          guessedLetters.push(response.input.toLowerCase());
           guessLeft--;
           console.log("You have "+guessLeft+" guesses left!");
         }
         else{
-          guessedLetters.push(response.input);
+          guessedLetters.push(response.input.toLowerCase());
           unguessedLength = unguessedLengthNew;
           console.log("Woot you got one!");
         }
@@ -60,7 +51,21 @@ function game(){
       //you win
       gameReset(true);
     }
+  }
+  else{
+    game();
+  }
   });
+}
+
+function validate(q){
+  if(/^[a-zA-Z]/.test(q) && q.length === 1){
+    return true;
+  }
+  else {
+    console.log("\n Gotta put in a letter, bud.");
+    return false;
+  }
 }
 
 function gameReset(win){
